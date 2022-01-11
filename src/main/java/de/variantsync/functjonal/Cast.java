@@ -4,7 +4,7 @@ public abstract class Cast {
     private Cast() {}
 
     @SuppressWarnings("unchecked")
-    public static <A, B> A unchecked(final B b) {
-        return (A) b;
+    public static <From, To> To unchecked(final From b) {
+        return (To) b;
     }
 }
