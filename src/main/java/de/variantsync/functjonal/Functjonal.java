@@ -6,7 +6,9 @@ import de.variantsync.functjonal.functions.FragileProcedure;
 import de.variantsync.functjonal.functions.FragileSupplier;
 import de.variantsync.functjonal.functions.Procedure;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -20,9 +22,27 @@ import java.util.stream.Collectors;
  * Contains also methods for pattern matching.
  */
 public class Functjonal {
-    /// Lists
+    /// Containers
+    public static <K1, K2, V1, V2> Map<K2, V2> bimap(
+            Map<K1, V1> m,
+            Function<? super K1, ? extends K2> key,
+            Function<? super V1, ? extends V2> val) {
+        return bimap(m, key, val, HashMap::new);
+    }
 
-    public static <T, U> List<U> fmap(final List<? extends T> a, final Function<T, U> f) {
+    public static <K1, K2, V1, V2, M extends Map<K2, V2>> M bimap(
+            Map<K1, V1> m,
+            Function<? super K1, ? extends K2> key,
+            Function<? super V1, ? extends V2> val,
+            Supplier<M> mapFactory) {
+        final M result = mapFactory.get();
+        for (final Map.Entry<K1, V1> e : m.entrySet()) {
+            result.put(key.apply(e.getKey()), val.apply(e.getValue()));
+        }
+        return result;
+    }
+
+    public static <T, U> List<U> map(final List<? extends T> a, final Function<T, U> f) {
         return a.stream().map(f).collect(Collectors.toList());
     }
 
