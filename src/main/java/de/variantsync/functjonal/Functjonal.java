@@ -1,6 +1,5 @@
 package de.variantsync.functjonal;
 
-import de.variantsync.functjonal.category.Unit;
 import de.variantsync.functjonal.functions.FragileFunction;
 import de.variantsync.functjonal.functions.FragileProcedure;
 import de.variantsync.functjonal.functions.FragileSupplier;

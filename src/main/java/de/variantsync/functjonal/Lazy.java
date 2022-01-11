@@ -2,7 +2,7 @@ package de.variantsync.functjonal;
 
 import de.variantsync.functjonal.category.Functor;
 import de.variantsync.functjonal.category.Monoid;
-import de.variantsync.functjonal.category.Product;
+import de.variantsync.functjonal.category.Semigroup;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -17,13 +17,20 @@ import java.util.function.Supplier;
  *
  * Use Lazy to make explicit the points in computation when we interact with the environment.
  * In particular, in that moment, when you access the lazy's content, all necessary computations will run.
- * In this project, this means that the interactions with the file system and git repositories will take place at exactly
- * that moment.
  *
  * @param <A> The return type of this lazy computation.
  */
 @SuppressWarnings("rawtypes")
 public class Lazy<A> implements Functor<Lazy, A>, CachedValue {
+    /**
+     * Lazy is a semigroup if the lazy values form a semigroup.
+     * @param s Semigroup over values.
+     * @return A semigroup for lazy values of type A.
+     */
+    public static <A> Semigroup<Lazy<A>> SEMIGROUP(final Semigroup<A> s) {
+        return (a, b) -> Lazy.of(() -> s.append(a.run(), b.run()));
+    }
+
     /**
      * Lazy is a monoid if the lazy values are monoidal.
      * Creates a Monoid for Lazy<A> from the monoid of the value type A.
@@ -32,8 +39,8 @@ public class Lazy<A> implements Functor<Lazy, A>, CachedValue {
      */
     public static <A> Monoid<Lazy<A>> MONOID(final Monoid<A> m) {
         return Monoid.From(
-                () -> Lazy.pure(m.mEmpty()),
-                (a, b) -> Lazy.of(() -> m.mAppend(a.run(), b.run()))
+                () -> Lazy.pure(m.neutral()),
+                SEMIGROUP(m)
         );
     }
 

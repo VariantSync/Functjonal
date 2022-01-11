@@ -1,11 +1,15 @@
-package de.variantsync.functjonal.category;
+package de.variantsync.functjonal;
+
+import de.variantsync.functjonal.category.Monoid;
+import de.variantsync.functjonal.category.Semigroup;
 
 /**
  * Unit represents a type that has exactly one value (Instance()).
  */
 public class Unit {
     private static final Unit instance = new Unit();
-    public static final Monoid<Unit> MONOID = Monoid.From(() -> instance, (a, b) -> instance);
+    public static final Semigroup<Unit> SEMIGROUP = (a, b) -> instance;
+    public static final Monoid<Unit> MONOID = Monoid.From(() -> instance, SEMIGROUP);
 
     private Unit() {}
 

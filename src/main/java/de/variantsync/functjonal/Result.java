@@ -1,7 +1,7 @@
 package de.variantsync.functjonal;
 
 import de.variantsync.functjonal.category.Monoid;
-import de.variantsync.functjonal.category.Unit;
+import de.variantsync.functjonal.category.Semigroup;
 import de.variantsync.functjonal.functions.FragileSupplier;
 import de.variantsync.functjonal.functions.FragileProcedure;
 
@@ -17,20 +17,28 @@ import java.util.function.Supplier;
  */
 public class Result<SuccessType, FailureType> {
     /**
+     * Combines two results.
+     * Returns failure if at least one of the given results is a failure.
+     */
+    public static <S, F> Semigroup<Result<S, F>> SEMIGROUP(final Semigroup<S> sg, final Semigroup<F> fg) {
+        return (a, b) -> {
+            final Result<S, F> resultWithPotentialFailure = a.isFailure() ? a : b;
+            final Result<S, F> other = a.isFailure() ? b : a;
+            return resultWithPotentialFailure.bimap(
+                    s -> other.isSuccess() ? sg.append(s, other.getSuccess()) : s,
+                    f -> other.isFailure() ? fg.append(f, other.getFailure()) : f
+            );
+        };
+    }
+
+    /**
      * Combines two results over monoidal values.
      * Returns failure if at least one of the given results is a failure.
      */
     public static <S, F> Monoid<Result<S, F>> MONOID(final Monoid<S> sm, final Monoid<F> fm) {
         return Monoid.From(
-                () -> Result.Success(sm.mEmpty()),
-                (a, b) -> {
-                    final Result<S, F> resultWithPotentialFailure = a.isFailure() ? a : b;
-                    final Result<S, F> other = a.isFailure() ? b : a;
-                    return resultWithPotentialFailure.bimap(
-                            s -> other.isSuccess() ? sm.mAppend(s, other.getSuccess()) : s,
-                            f -> other.isFailure() ? fm.mAppend(f, other.getFailure()) : f
-                    );
-                }
+                () -> Result.Success(sm.neutral()),
+                SEMIGROUP(sm, fm)
         );
     }
 
