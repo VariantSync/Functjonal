@@ -31,7 +31,7 @@ public class Lazy<A> implements Functor<Lazy, A>, CachedValue {
      * @return a Monoid for Lazy<A>.
      */
     public static <A> Monoid<Lazy<A>> MONOID(final Monoid<A> m) {
-        return Monoid.Create(
+        return Monoid.From(
                 () -> Lazy.pure(m.mEmpty()),
                 (a, b) -> Lazy.of(() -> m.mAppend(a.run(), b.run()))
         );

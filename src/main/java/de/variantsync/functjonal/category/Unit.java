@@ -5,7 +5,7 @@ package de.variantsync.functjonal.category;
  */
 public class Unit {
     private static final Unit instance = new Unit();
-    public static final Monoid<Unit> MONOID = Monoid.Create(() -> instance, (a, b) -> instance);
+    public static final Monoid<Unit> MONOID = Monoid.From(() -> instance, (a, b) -> instance);
 
     private Unit() {}
 

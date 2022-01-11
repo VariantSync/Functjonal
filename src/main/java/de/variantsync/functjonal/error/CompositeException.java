@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * Exception that can group exceptions as a list.
  */
 public class CompositeException extends Exception {
-    public static final Monoid<CompositeException> MONOID = Monoid.Create(
+    public static final Monoid<CompositeException> MONOID = Monoid.From(
             CompositeException::new,
             CompositeException::new
     );

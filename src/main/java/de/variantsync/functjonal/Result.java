@@ -21,7 +21,7 @@ public class Result<SuccessType, FailureType> {
      * Returns failure if at least one of the given results is a failure.
      */
     public static <S, F> Monoid<Result<S, F>> MONOID(final Monoid<S> sm, final Monoid<F> fm) {
-        return Monoid.Create(
+        return Monoid.From(
                 () -> Result.Success(sm.mEmpty()),
                 (a, b) -> {
                     final Result<S, F> resultWithPotentialFailure = a.isFailure() ? a : b;
