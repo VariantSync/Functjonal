@@ -64,6 +64,15 @@ public class Functjonal {
         return ma -> ma.match(success, failure);
     }
 
+
+    public static <T> Consumer<T> when(Predicate<T> condition, Consumer<? super T> task) {
+        return t -> {
+            if (condition.test(t)) {
+                task.accept(t);
+            }
+        };
+    }
+
     /**
      * Creates a branching function for given condition, then and else case.
      * @param condition The condition choosing whether to run 'then' or 'otherwise'.
