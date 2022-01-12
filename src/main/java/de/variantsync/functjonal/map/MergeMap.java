@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * A map whose values are merged instead of overwritten upon put with a duplicate key.
  * In particular, when invoking put(k, v) and k is already associated to a value w, then
- * v will be appended to w via w.append(v).
+ * v will be appended to w with a semigroup for v.
  * @param <K> key type
  * @param <V> value type
  */
@@ -18,11 +18,28 @@ public class MergeMap<K, V> extends MapDecorator<K, V> {
 
     private final Function<V, Semigroup<V>> semigroupFactory;
 
+    /**
+     * Creates a merge map for the given map.
+     * @param inner The map on which to merge the values of duplicate keys.
+     * @param semigroupFactory A factory returning a semigroup for a value v that
+     *                         is used to merge other values with v.
+     *                         In particular, when a new value v' is put into the map for key k for which
+     *                         already an entry v is present, then v and v' will be merged via
+     *                         map.put(k, semigroupFactory.apply(v).append(v, v')).
+     */
     public MergeMap(final Map<K, V> inner, final Function<V, Semigroup<V>> semigroupFactory) {
         super(inner);
         this.semigroupFactory = semigroupFactory;
     }
 
+    /**
+     * Creates a merge map for the given map.
+     * @param inner The map on which to merge the values of duplicate keys.
+     * @param semigroup A semigroup that is used to merge values.
+     *                  In particular, when a new value v' is put into the map for key k for which
+     *                  already an entry v is present, then v and v' will be merged via
+     *                  map.put(k, semigroup.append(v, v')).
+     */
     public MergeMap(final Map<K, V> inner, final Semigroup<V> semigroup) {
         super(inner);
         this.semigroupFactory = x -> semigroup;
