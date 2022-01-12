@@ -34,8 +34,9 @@ public class Result<SuccessType, FailureType> {
     /**
      * Combines two results over monoidal values.
      * Returns failure if at least one of the given results is a failure.
+     * The neutral value is success with the neutral value of sm.
      */
-    public static <S, F> Monoid<Result<S, F>> MONOID(final Monoid<S> sm, final Monoid<F> fm) {
+    public static <S, F> Monoid<Result<S, F>> MONOID(final Monoid<S> sm, final Semigroup<F> fm) {
         return Monoid.From(
                 () -> Result.Success(sm.neutral()),
                 SEMIGROUP(sm, fm)

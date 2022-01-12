@@ -8,8 +8,7 @@ import de.variantsync.functjonal.category.Semigroup;
  */
 public class Unit {
     private static final Unit instance = new Unit();
-    public static final Semigroup<Unit> SEMIGROUP = (a, b) -> instance;
-    public static final Monoid<Unit> MONOID = Monoid.From(() -> instance, SEMIGROUP);
+    public static final Monoid<Unit> MONOID = Monoid.From(() -> instance, (a, b) -> instance);
 
     private Unit() {}
 
