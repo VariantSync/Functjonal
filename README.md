@@ -28,6 +28,7 @@ Currently, the major features of Functjonal are:
   PassedHours result = hours.stream().reduce(m.neutral(), m::append);
   ```
   As java does not feature type classes and inheritance is insufficient (as for instance getting the neutral element from a monoid would require an instance of the monoid's data type), we decided to adopt this convention as it is also flexible to define multiple monoids over the same datatype (e.g., `(0, +)` and `(1, *)` for `int`).
+  This convention also allows us to define monoids for higher-kinded types (which cannot be expressed in java). For example, [Products](src/main/java/de/variantsync/functjonal/Product.java) are monoidal when their arguments are monoidal.
 - [Results](src/main/java/de/variantsync/functjonal/Result.java), also known as `Either` from Haskell. A `Result<S, F>` is a sum type that either has a value of type `S` (indicating success) or a value of type `F` (indicating failure).
 - [Product](src/main/java/de/variantsync/functjonal/Product.java) as a simple pair.
 - [Unit](src/main/java/de/variantsync/functjonal/Unit.java) as an explicit representation for `void`.
