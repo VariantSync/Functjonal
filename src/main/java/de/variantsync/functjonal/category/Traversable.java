@@ -9,6 +9,6 @@ public class Traversable {
     public static <S, F> Result<Optional<S>, F> sequence(final Optional<Result<S, F>> o) {
         return Functjonal.match(o,
                 just -> just.map(Optional::of),
-                () -> Result.Success(Optional.empty()));
+                () -> Result.success(Optional.empty()));
     }
 }

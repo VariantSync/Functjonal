@@ -9,7 +9,7 @@ record LambdaMonoid<M>(Supplier<M> empty, Semigroup<M> compose) implements Monoi
     }
 
     @Override
-    public M append(M a, M b) {
+    public M append(final M a, final M b) {
         return compose.append(a, b);
     }
 }

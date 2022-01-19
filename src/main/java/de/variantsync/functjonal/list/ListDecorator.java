@@ -51,7 +51,7 @@ public class ListDecorator<T> implements List<T> {
     }
 
     @Override
-    public <T1> T1[] toArray(final T1 [] a) {
+    public <T1> T1[] toArray(final T1[] a) {
         return wrappee.toArray(a);
     }
 

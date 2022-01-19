@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 /**
  * Type to capture results of computations that might fail.
  * A result reflects either the return value of a successful computation or a failure state.
+ *
  * @param <SuccessType> Type for values in case of success.
  * @param <FailureType> Type for values in case of failure.
  */
@@ -20,7 +21,7 @@ public class Result<SuccessType, FailureType> {
      * Combines two results.
      * Returns failure if at least one of the given results is a failure.
      */
-    public static <S, F> Semigroup<Result<S, F>> SEMIGROUP(final Semigroup<S> sg, final Semigroup<F> fg) {
+    public static <S, F> Semigroup<Result<S, F>> semigroup(final Semigroup<S> sg, final Semigroup<F> fg) {
         return (a, b) -> {
             final Result<S, F> resultWithPotentialFailure = a.isFailure() ? a : b;
             final Result<S, F> other = a.isFailure() ? b : a;
@@ -36,10 +37,10 @@ public class Result<SuccessType, FailureType> {
      * Returns failure if at least one of the given results is a failure.
      * The neutral value is success with the neutral value of sm.
      */
-    public static <S, F> Monoid<Result<S, F>> MONOID(final Monoid<S> sm, final Semigroup<F> fm) {
-        return Monoid.From(
-                () -> Result.Success(sm.neutral()),
-                SEMIGROUP(sm, fm)
+    public static <S, F> Monoid<Result<S, F>> monoid(final Monoid<S> sm, final Semigroup<F> fm) {
+        return Monoid.from(
+                () -> Result.success(sm.neutral()),
+                semigroup(sm, fm)
         );
     }
 
@@ -50,7 +51,8 @@ public class Result<SuccessType, FailureType> {
 
     /**
      * Creates a new Result where exactly one of the arguments is excepted to be null.
-     * @param result Success value or null
+     *
+     * @param result  Success value or null
      * @param failure Failure value or null
      */
     protected Result(final SuccessType result, final FailureType failure) {
@@ -62,20 +64,22 @@ public class Result<SuccessType, FailureType> {
 
     /**
      * Creates a successful result with the given value.
+     *
      * @param s Return value of the result.
      * @return Success value.
      */
-    public static <S, F> Result<S, F> Success(final S s) {
+    public static <S, F> Result<S, F> success(final S s) {
         return new Result<>(s, null);
     }
 
 
     /**
      * Creates a failed result with the given error value.
+     *
      * @param f Value indicating failure.
      * @return Failure result.
      */
-    public static <S, F> Result<S, F> Failure(final F f) {
+    public static <S, F> Result<S, F> failure(final F f) {
         return new Result<>(null, f);
     }
 
@@ -84,15 +88,16 @@ public class Result<SuccessType, FailureType> {
      * Running f will be interpreted as a success iff f returns true.
      * Running f will be interpreted as a failure iff f returns false.
      * In case of failure, a failure value will be produced with the given failure supplier.
-     * @param f Computation to run that indicates success with a boolean return value.
+     *
+     * @param f       Computation to run that indicates success with a boolean return value.
      * @param failure Factory for failure message in case f returned false.
      * @return Success iff f returned true, Failure otherwise.
      */
-    public static <F> Result<Unit, F> FromFlag(final Supplier<Boolean> f, final Supplier<F> failure) {
+    public static <F> Result<Unit, F> fromFlag(final Supplier<Boolean> f, final Supplier<F> failure) {
         if (f.get()) {
-            return Success(Unit.Instance());
+            return success(Unit.instance());
         } else {
-            return Failure(failure.get());
+            return failure(failure.get());
         }
     }
 
@@ -100,38 +105,44 @@ public class Result<SuccessType, FailureType> {
      * Runs the given computation that indicates success by returning a boolean and that may throw an exception.
      * Running f will be interpreted as a success iff f returns true and throws no exception.
      * Running f will be interpreted as a failure iff f returns false or throws an exception.
-     * If f did not throw an exception but returned false, a failure value will be produced with the given failure supplier.
-     * @param f Computation to run that indicates success with a boolean return value or an exception.
+     * If f did not throw an exception but returned false,
+     * a failure value will be produced with the given failure supplier.
+     *
+     * @param f       Computation to run that indicates success with a boolean return value or an exception.
      * @param failure Factory for failure message in case f returned false.
      * @return Success iff f returned true and did not throw an exception, Failure otherwise.
      */
-    public static <E extends Exception> Result<Unit, E> FromFlag(final FragileSupplier<Boolean, E> f, final Supplier<E> failure) {
+    public static <E extends Exception> Result<Unit, E> fromFlag(
+            final FragileSupplier<Boolean, E> f,
+            final Supplier<E> failure
+    ) {
         return Try(f).bibind(
                 Functjonal.when(
-                        () -> Success(Unit.Instance()),
-                        () -> Failure(failure.get())
+                        () -> success(Unit.instance()),
+                        () -> failure(failure.get())
                 ),
-                Result::Failure
+                Result::failure
         );
     }
 
     /**
      * Runs the given computation that may throw an exception.
-     * @param s Computation to run.
+     *
+     * @param s   Computation to run.
      * @param <E> The type of exception that may be thrown by s.
      * @return A result containing the result of the given computation or the exception in case it was thrown.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "checkstyle:TodoComment", "checkstyle:MethodName"})
     public static <S, E extends Exception> Result<S, E> Try(final FragileSupplier<S, E> s) {
         try {
             final S result = s.get();
-            return Result.Success(result);
+            return Result.success(result);
         } catch (final Exception e) { // We cannot catch E directly.
             if (HARD_CRASH_ON_TRY) {
                 throw new RuntimeException(e);
             } else {
                 // TODO: This cast might be impossible!
-                return Result.Failure((E) e);
+                return Result.failure((E) e);
             }
         }
     }
@@ -139,12 +150,14 @@ public class Result<SuccessType, FailureType> {
 
     /**
      * Runs the given computation that may throw an exception.
-     * @param s Computation to run.
+     *
+     * @param s   Computation to run.
      * @param <E> The type of exception that may be thrown by s.
      * @return A result containing the result of the given computation or the exception in case it was thrown.
      */
+    @SuppressWarnings("checkstyle:MethodName")
     public static <E extends Exception> Result<Unit, E> Try(final FragileProcedure<E> s) {
-        return Try(Functjonal.LiftFragile(s));
+        return Try(Functjonal.liftFragile(s));
     }
 
     /// Operations
@@ -166,11 +179,14 @@ public class Result<SuccessType, FailureType> {
     /**
      * Result is a bifunctor.
      */
-    public <S2, F2> Result<S2, F2> bimap(final Function<SuccessType, S2> successCase, final Function<FailureType, F2> failureCase) {
+    public <S2, F2> Result<S2, F2> bimap(
+            final Function<SuccessType, S2> successCase,
+            final Function<FailureType, F2> failureCase
+    ) {
         if (isSuccess()) {
-            return Success(successCase.apply(result));
+            return success(successCase.apply(result));
         } else {
-            return Failure(failureCase.apply(failure));
+            return failure(failureCase.apply(failure));
         }
     }
 
@@ -186,7 +202,7 @@ public class Result<SuccessType, FailureType> {
         if (isSuccess()) {
             return successCase.apply(result);
         } else {
-            return Failure(getFailure());
+            return failure(getFailure());
         }
     }
 
@@ -194,11 +210,14 @@ public class Result<SuccessType, FailureType> {
         if (isFailure()) {
             return failureCase.apply(failure);
         } else {
-            return Success(getSuccess());
+            return success(getSuccess());
         }
     }
 
-    public <S2, F2> Result<S2, F2> bibind(final Function<SuccessType, Result<S2, F2>> successCase, final Function<FailureType, Result<S2, F2>> failureCase) {
+    public <S2, F2> Result<S2, F2> bibind(
+            final Function<SuccessType, Result<S2, F2>> successCase,
+            final Function<FailureType, Result<S2, F2>> failureCase
+    ) {
         if (isSuccess()) {
             return successCase.apply(result);
         } else {
@@ -208,6 +227,7 @@ public class Result<SuccessType, FailureType> {
 
     /**
      * Flattens a nested Result.
+     *
      * @param r A nested Result that should be flattened to a single Result.
      * @return Flattened result.
      */
@@ -215,7 +235,7 @@ public class Result<SuccessType, FailureType> {
         if (r.isSuccess()) {
             return r.getSuccess();
         } else {
-            return Failure(r.getFailure());
+            return failure(r.getFailure());
         }
     }
 
@@ -235,6 +255,7 @@ public class Result<SuccessType, FailureType> {
         return failure;
     }
 
+    @SuppressWarnings("checkstyle:EmptyBlock")
     public void assertSuccess() {
         if (isFailure()) {
 //            Logger.error(getFailure().toString());
@@ -251,7 +272,9 @@ public class Result<SuccessType, FailureType> {
     }
 
     public static <S> S expect(final Result<S, ? extends Throwable> result) {
-        return result.match(Function.identity(), e -> {throw new RuntimeException(e);});
+        return result.match(Function.identity(), e -> {
+            throw new RuntimeException(e);
+        });
     }
 
     public void ifSuccess(final Consumer<SuccessType> f) {

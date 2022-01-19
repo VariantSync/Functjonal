@@ -9,6 +9,7 @@ import java.util.List;
  * Instead of iterating over elements individually, a ClusteredIterator collects the next n elements in a list
  * that will be returned, where n is a positive integer.
  * The last returned list might be shorter than n iff there were less than n elements remaining to visit.
+ *
  * @param <T>
  */
 public class ClusteredIterator<T> implements Iterator<List<T>> {
@@ -18,7 +19,7 @@ public class ClusteredIterator<T> implements Iterator<List<T>> {
     /**
      * Clusters the elements returned by the inner iterator to chunks of the given size.
      */
-    public ClusteredIterator(final Iterator<T> inner, int clusterSize) {
+    public ClusteredIterator(final Iterator<T> inner, final int clusterSize) {
         this.inner = inner;
         this.clusterSize = clusterSize;
     }

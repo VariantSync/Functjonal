@@ -12,7 +12,7 @@ package de.variantsync.functjonal.category;
  */
 @FunctionalInterface
 public interface InplaceSemigroup<T> extends Semigroup<T> {
-    void appendToFirst(final T a, final T b);
+    void appendToFirst(T a, T b);
 
     default T append(final T a, final T b) {
         appendToFirst(a, b);

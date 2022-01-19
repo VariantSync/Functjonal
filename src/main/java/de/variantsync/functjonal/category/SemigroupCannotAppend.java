@@ -1,7 +1,7 @@
 package de.variantsync.functjonal.category;
 
 public class SemigroupCannotAppend extends RuntimeException {
-    public SemigroupCannotAppend(String message) {
+    public SemigroupCannotAppend(final String message) {
         super(message);
     }
 }

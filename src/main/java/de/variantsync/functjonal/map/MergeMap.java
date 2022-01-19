@@ -10,17 +10,19 @@ import java.util.function.Function;
  * A map whose values are merged instead of overwritten upon put with a duplicate key.
  * In particular, when invoking put(k, v) and k is already associated to a value w, then
  * v will be appended to w with a semigroup for v.
+ *
  * @param <K> key type
  * @param <V> value type
  */
 public class MergeMap<K, V> extends MapDecorator<K, V> {
-    public final InplaceSemigroup<MergeMap<K, V>> ISEMIGROUP = MergeMap::append;
+    public final InplaceSemigroup<MergeMap<K, V>> isemigroup = MergeMap::append;
 
     private final Function<V, Semigroup<V>> semigroupFactory;
 
     /**
      * Creates a merge map for the given map.
-     * @param inner The map on which to merge the values of duplicate keys.
+     *
+     * @param inner            The map on which to merge the values of duplicate keys.
      * @param semigroupFactory A factory returning a semigroup for a value v that
      *                         is used to merge other values with v.
      *                         In particular, when a new value v' is put into the map for key k for which
@@ -34,7 +36,8 @@ public class MergeMap<K, V> extends MapDecorator<K, V> {
 
     /**
      * Creates a merge map for the given map.
-     * @param inner The map on which to merge the values of duplicate keys.
+     *
+     * @param inner     The map on which to merge the values of duplicate keys.
      * @param semigroup A semigroup that is used to merge values.
      *                  In particular, when a new value v' is put into the map for key k for which
      *                  already an entry v is present, then v and v' will be merged via
@@ -57,14 +60,16 @@ public class MergeMap<K, V> extends MapDecorator<K, V> {
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        if (m.isEmpty()) return;
+    public void putAll(final Map<? extends K, ? extends V> m) {
+        if (m.isEmpty()) {
+            return;
+        }
         for (var entry : m.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
 
-    public void append(Map<K, V> other) {
+    public void append(final Map<K, V> other) {
         putAll(other);
     }
 
@@ -72,20 +77,22 @@ public class MergeMap<K, V> extends MapDecorator<K, V> {
      * Appends the given value to the value currently registered in the given map for the given key.
      * If the given map does not contain an entry for the given key, the given value is stored as
      * the keys value instead.
-     * @param <K> key type
-     * @param <V> value type
-     * @param map The map to which the value should be added.
-     * @param key The key whose value should be appended by the given value. If the key is not contained
-*            in the given map, a new entry is created with this key and the given value.
+     *
+     * @param <K>           key type
+     * @param <V>           value type
+     * @param map           The map to which the value should be added.
+     * @param key           The key whose value should be appended by the given value. If the key is not contained
+     *                      in the given map, a new entry is created with this key and the given value.
      * @param valueToAppend The value to append to map.get(key). If the map does not contain an entry for
-*                      the given key, a new entry with the given key value pair is made (i.e., map.put(key, valueToAppend)).
+     *                      the given key, a new entry with the given key value pair is made
+     *                      (i.e., map.put(key, valueToAppend)).
      */
     public static <K, V> void putValue(
             final Map<K, V> map,
             final K key,
             final V valueToAppend,
-            Semigroup<V> semigroup)
-    {
+            final Semigroup<V> semigroup
+    ) {
         V result = valueToAppend;
         if (map.containsKey(key)) {
             result = semigroup.append(map.get(key), valueToAppend);
@@ -96,8 +103,8 @@ public class MergeMap<K, V> extends MapDecorator<K, V> {
     public static <K, V> void putAllValues(
             final Map<K, V> map,
             final Map<K, V> other,
-            Semigroup<V> semigroup)
-    {
+            final Semigroup<V> semigroup
+    ) {
         for (final Map.Entry<K, V> otherEntry : other.entrySet()) {
             putValue(map, otherEntry.getKey(), otherEntry.getValue(), semigroup);
         }

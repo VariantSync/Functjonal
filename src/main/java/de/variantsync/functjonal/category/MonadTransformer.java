@@ -12,8 +12,9 @@ import java.util.function.Function;
  * (such as MaybeT or StateT from haskell) without a decent amount of janky hacks.
  * Thus, this class contains the implementations of monad transformers fixed in the input monad type.
  */
-public class MonadTransformer {
-    private MonadTransformer() {}
+public final class MonadTransformer {
+    private MonadTransformer() {
+    }
 
     /// Lazy<Optional<T>>
 
@@ -21,7 +22,7 @@ public class MonadTransformer {
         return m.bind(Functjonal.match(
                 /* Just a  */ f,
                 /* Nothing */ () -> Lazy.of(Optional::empty)
-            ));
+        ));
     }
 
     public static <A> Lazy<Optional<A>> pure(final A a) {

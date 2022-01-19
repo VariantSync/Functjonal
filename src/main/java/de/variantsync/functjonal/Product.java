@@ -8,12 +8,13 @@ public record Product<A, B>(A first, B second) {
     /**
      * Products are monoids over monoidal values.
      * Creates a Monoid for Product<A, B> from monoids of for A and B.
+     *
      * @param ma Monoid over values of type A.
      * @param mb Monoid over values of type B.
      * @return a Monoid for Pair<A, B>.
      */
-    public static <A, B> Monoid<Product<A, B>> MONOID(final Monoid<A> ma, final Monoid<B> mb) {
-        return Monoid.From(
+    public static <A, B> Monoid<Product<A, B>> monoid(final Monoid<A> ma, final Monoid<B> mb) {
+        return Monoid.from(
                 () -> new Product<>(ma.neutral(), mb.neutral()),
                 (a, b) -> new Product<>(ma.append(a.first, b.first), mb.append(a.second, b.second))
         );

@@ -7,7 +7,7 @@ import java.util.function.Supplier;
  * @see InplaceSemigroup
  */
 public interface InplaceMonoid<M> extends Monoid<M>, InplaceSemigroup<M> {
-    static <N> InplaceMonoid<N> From(final Supplier<N> empty, final InplaceSemigroup<N> compose) {
+    static <N> InplaceMonoid<N> from(final Supplier<N> empty, final InplaceSemigroup<N> compose) {
         return new LambdaInplaceMonoid<>(empty, compose);
     }
 }

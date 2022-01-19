@@ -10,7 +10,7 @@ import java.util.List;
  * @param <T> Type of elements that are contained in this list.
  */
 public class NonEmptyList<T> extends ListDecorator<T> {
-    private final static String ERROR_MESSAGE = "Operation disallowed as it could make this list become empty!";
+    private static final String ERROR_MESSAGE = "Operation disallowed as it could make this list become empty!";
 
     public NonEmptyList(final List<T> list) {
         super(list);

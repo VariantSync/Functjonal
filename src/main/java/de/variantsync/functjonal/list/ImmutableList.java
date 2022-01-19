@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class ImmutableList<T> extends ListDecorator<T> {
-    private final static String ERROR_MESSAGE = "List is immutable.";
+    private static final String ERROR_MESSAGE = "List is immutable.";
 
     public ImmutableList(final List<T> list) {
         super(list);

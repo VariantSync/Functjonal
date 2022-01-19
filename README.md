@@ -12,7 +12,7 @@ Currently, the major features of Functjonal are:
   import de.variantsync.functjonal.category.Monoid;
   
   public record PassedHours(int hours, int minutes) {
-    public static final Monoid<PassedHours> MONOID = Monoid.From(
+    public static final Monoid<PassedHours> MONOID = Monoid.from(
       () -> new PassedHours(0, 0),
       (a, b) -> new PassedHours(
           a.hours() + b.hours() + ((a.minutes() + b.minutes()) / 60),

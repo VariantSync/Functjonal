@@ -26,32 +26,32 @@ public abstract class MapDecorator<K, V> implements Map<K, V> {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return inner.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         return inner.containsValue(value);
     }
 
     @Override
-    public V get(Object key) {
+    public V get(final Object key) {
         return inner.get(key);
     }
 
     @Override
-    public V put(K key, V value) {
+    public V put(final K key, final V value) {
         return inner.put(key, value);
     }
 
     @Override
-    public V remove(Object key) {
+    public V remove(final Object key) {
         return inner.remove(key);
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
+    public void putAll(final Map<? extends K, ? extends V> m) {
         inner.putAll(m);
     }
 
