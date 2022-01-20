@@ -5,10 +5,7 @@ import de.variantsync.functjonal.functions.FragileProcedure;
 import de.variantsync.functjonal.functions.FragileSupplier;
 import de.variantsync.functjonal.functions.Procedure;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -145,5 +142,15 @@ public class Functjonal {
 
     public static <A, B, E extends Exception> Lazy<Optional<B>> mapFragileLazily(final A a, final FragileFunction<A, B, E> f, final Supplier<String> errorMessage) {
         return Lazy.of(() -> mapFragile(a, f, errorMessage));
+    }
+
+    /// Utility
+
+    public static String unwords(Object... words) {
+        return intercalate(" ", words);
+    }
+
+    public static String intercalate(String separator, Object... words) {
+        return Arrays.stream(words).map(Object::toString).reduce((a, b) -> a + separator + b).orElse("");
     }
 }
