@@ -136,6 +136,9 @@ public class Result<SuccessType, FailureType> {
         }
     }
 
+    public static <A, S, E extends Exception> Function<A, Result<S, E>> Try(final FragileFunction<A, S, E> f) {
+        return a -> Try(() -> f.run(a));
+    }
 
     /**
      * Runs the given computation that may throw an exception.
