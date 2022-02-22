@@ -121,7 +121,6 @@ public class Result<SuccessType, FailureType> {
      * @param <E> The type of exception that may be thrown by s.
      * @return A result containing the result of the given computation or the exception in case it was thrown.
      */
-    @SuppressWarnings("unchecked")
     public static <S, E extends Exception> Result<S, E> Try(final FragileSupplier<S, E> s) {
         try {
             final S result = s.get();
@@ -131,7 +130,7 @@ public class Result<SuccessType, FailureType> {
                 throw new RuntimeException(e);
             } else {
                 // TODO: This cast might be impossible!
-                return Result.Failure((E) e);
+                return Result.Failure(Cast.unchecked(e));
             }
         }
     }
