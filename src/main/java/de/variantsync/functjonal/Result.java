@@ -2,6 +2,7 @@ package de.variantsync.functjonal;
 
 import de.variantsync.functjonal.category.Monoid;
 import de.variantsync.functjonal.category.Semigroup;
+import de.variantsync.functjonal.functions.FragileFunction;
 import de.variantsync.functjonal.functions.FragileSupplier;
 import de.variantsync.functjonal.functions.FragileProcedure;
 
@@ -179,6 +180,15 @@ public class Result<SuccessType, FailureType> {
         } else {
             return failureCase.apply(failure);
         }
+    }
+
+    public Result<SuccessType, FailureType> peek(final Consumer<SuccessType> successCase, final Consumer<FailureType> failureCase) {
+        if (isSuccess()) {
+            successCase.accept(result);
+        } else {
+            failureCase.accept(failure);
+        }
+        return this;
     }
 
     public <S2> Result<S2, FailureType> bind(final Function<SuccessType, Result<S2, FailureType>> successCase) {
