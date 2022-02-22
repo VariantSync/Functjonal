@@ -265,4 +265,13 @@ public class Result<SuccessType, FailureType> {
             f.accept(getFailure());
         }
     }
+
+    @Override
+    public String toString() {
+        if (isSuccess()) {
+            return "(Success " + this.result + ")";
+        } else {
+            return "(Failure " + this.failure + ")";
+        }
+    }
 }
