@@ -28,10 +28,10 @@ Currently, the major features of Functjonal are:
   PassedHours result = hours.stream().reduce(m.neutral(), m::append);
   ```
   As java does not feature type classes and inheritance is insufficient (as for instance getting the neutral element from a monoid would require an instance of the monoid's data type), we decided to adopt this convention as it is also flexible to define multiple monoids over the same datatype (e.g., `(0, +)` and `(1, *)` for `int`).
-  This convention also allows us to define monoids for higher-kinded types (which cannot be expressed in java). For example, [Products](src/main/java/anonymized/functjonal/Product.java) are monoidal when their arguments are monoidal.
-- [Results](src/main/java/anonymized/functjonal/Result.java), also known as `Either` from Haskell. A `Result<S, F>` is a sum type that either has a value of type `S` (indicating success) or a value of type `F` (indicating failure).
-- [Product](src/main/java/anonymized/functjonal/Product.java) as a simple pair.
-- [Unit](src/main/java/anonymized/functjonal/Unit.java) as an explicit representation for `void`.
-- [Lazy evaluation](src/main/java/anonymized/functjonal/Lazy.java).  A `Lazy<A>` lazily encapsulates a value of type `A` that can be accessed with `lazy.run()`. The first, time `run` is invoked, the value will be computed and cached. Subsequent calls of `run`, directly return the cached value. In the background, `Lazy<A>` is wraps a `Supplier<A>`.
+  This convention also allows us to define monoids for higher-kinded types (which cannot be expressed in java). For example, [Products](src/main/java/org/variantsync/functjonal/Product.java) are monoidal when their arguments are monoidal.
+- [Results](src/main/java/org/variantsync/functjonal/Result.java), also known as `Either` from Haskell. A `Result<S, F>` is a sum type that either has a value of type `S` (indicating success) or a value of type `F` (indicating failure).
+- [Product](src/main/java/org/variantsync/functjonal/Product.java) as a simple pair.
+- [Unit](src/main/java/org/variantsync/functjonal/Unit.java) as an explicit representation for `void`.
+- [Lazy evaluation](src/main/java/org/variantsync/functjonal/Lazy.java).  A `Lazy<A>` lazily encapsulates a value of type `A` that can be accessed with `lazy.run()`. The first, time `run` is invoked, the value will be computed and cached. Subsequent calls of `run`, directly return the cached value. In the background, `Lazy<A>` is wraps a `Supplier<A>`.
 
 Other features include non-empty lists as well as further quality-of-life utilities for lists, maps, and iterators.
