@@ -44,7 +44,7 @@ public class Result<SuccessType, FailureType> {
         );
     }
 
-    public static final boolean HARD_CRASH_ON_TRY = false;
+    public static boolean HARD_CRASH_ON_TRY = false;
 
     private final SuccessType result;
     private final FailureType failure;
@@ -130,8 +130,11 @@ public class Result<SuccessType, FailureType> {
             if (HARD_CRASH_ON_TRY) {
                 throw new RuntimeException(e);
             } else {
-                // TODO: This cast might be impossible!
-                return Result.Failure(Cast.unchecked(e));
+                try {
+                    return Result.Failure(Cast.unchecked(e));
+                } catch (final ClassCastException castImpossible) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
