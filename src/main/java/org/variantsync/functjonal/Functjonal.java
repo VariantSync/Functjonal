@@ -23,7 +23,7 @@ public class Functjonal {
             Map<K1, V1> m,
             Function<? super K1, ? extends K2> key,
             Function<? super V1, ? extends V2> val) {
-        return bimap(m, key, val, HashMap::new);
+        return bimap(m, key, val, LinkedHashMap::new);
     }
 
     public static <K1, K2, V1, V2, M extends Map<K2, V2>> M bimap(
