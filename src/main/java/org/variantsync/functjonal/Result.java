@@ -1,8 +1,8 @@
 package org.variantsync.functjonal;
 
-import org.variantsync.functjonal.functions.FragileFunction;
-import org.variantsync.functjonal.functions.FragileProcedure;
-import org.variantsync.functjonal.functions.FragileSupplier;
+import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.function.FailableRunnable;
+import org.apache.commons.lang3.function.FailableSupplier;
 import org.variantsync.functjonal.category.Monoid;
 import org.variantsync.functjonal.category.Semigroup;
 
@@ -106,7 +106,7 @@ public class Result<SuccessType, FailureType> {
      * @param failure Factory for failure message in case f returned false.
      * @return Success iff f returned true and did not throw an exception, Failure otherwise.
      */
-    public static <E extends Exception> Result<Unit, E> FromFlag(final FragileSupplier<Boolean, E> f, final Supplier<E> failure) {
+    public static <E extends Exception> Result<Unit, E> FromFlag(final FailableSupplier<Boolean, E> f, final Supplier<E> failure) {
         return Try(f).bibind(
                 Functjonal.when(
                         () -> Success(Unit.Instance()),
@@ -122,7 +122,7 @@ public class Result<SuccessType, FailureType> {
      * @param <E> The type of exception that may be thrown by s.
      * @return A result containing the result of the given computation or the exception in case it was thrown.
      */
-    public static <S, E extends Exception> Result<S, E> Try(final FragileSupplier<S, E> s) {
+    public static <S, E extends Exception> Result<S, E> Try(final FailableSupplier<S, E> s) {
         try {
             final S result = s.get();
             return Result.Success(result);
@@ -139,8 +139,8 @@ public class Result<SuccessType, FailureType> {
         }
     }
 
-    public static <A, S, E extends Exception> Function<A, Result<S, E>> Try(final FragileFunction<A, S, E> f) {
-        return a -> Try(() -> f.run(a));
+    public static <A, S, E extends Exception> Function<A, Result<S, E>> Try(final FailableFunction<A, S, E> f) {
+        return a -> Try(() -> f.apply(a));
     }
 
     /**
@@ -149,8 +149,8 @@ public class Result<SuccessType, FailureType> {
      * @param <E> The type of exception that may be thrown by s.
      * @return A result containing the result of the given computation or the exception in case it was thrown.
      */
-    public static <E extends Exception> Result<Unit, E> Try(final FragileProcedure<E> s) {
-        return Try(Functjonal.LiftFragile(s));
+    public static <E extends Exception> Result<Unit, E> Try(final FailableRunnable<E> s) {
+        return Try(Functjonal.LiftFailable(s));
     }
 
     /// Operations

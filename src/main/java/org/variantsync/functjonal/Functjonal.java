@@ -1,16 +1,15 @@
 package org.variantsync.functjonal;
 
-import org.variantsync.functjonal.functions.FragileFunction;
-import org.variantsync.functjonal.functions.FragileProcedure;
-import org.variantsync.functjonal.functions.FragileSupplier;
-import org.variantsync.functjonal.functions.Procedure;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.function.FailableRunnable;
+import org.apache.commons.lang3.function.FailableSupplier;
 
 /**
  * Helper class containing methods for functional programming missing in the standard library
@@ -103,14 +102,14 @@ public class Functjonal {
         };
     }
 
-    public static Supplier<Unit> Lift(final Procedure f) {
+    public static Supplier<Unit> Lift(final Runnable f) {
         return () -> {
             f.run();
             return Unit.Instance();
         };
     }
 
-    public static <E extends Exception> FragileSupplier<Unit, E> LiftFragile(final FragileProcedure<E> f) {
+    public static <E extends Exception> FailableSupplier<Unit, E> LiftFailable(final FailableRunnable<E> f) {
         return () -> {
             f.run();
             return Unit.Instance();
@@ -129,9 +128,9 @@ public class Functjonal {
      * @return Returns the result of f(a) if a is not null and f(a) did not throw an exception of type E.
      *         Returns Optional.empty() if a is null or f(a) threw an exception of type E.
      */
-    public static <Nullable, B, E extends Exception> Optional<B> mapFragile(final Nullable n, final FragileFunction<Nullable, B, E> f, final Supplier<String> errorMessage) {
+    public static <Nullable, B, E extends Exception> Optional<B> mapFailable(final Nullable n, final FailableFunction<Nullable, B, E> f, final Supplier<String> errorMessage) {
         return Optional.ofNullable(n).flatMap(a ->
-                Result.Try(() -> f.run(a)).match(
+                Result.Try(() -> f.apply(a)).match(
                         Optional::ofNullable, // actually the returned B can also be null, thus ofNullable here
                         exception -> {
 //                            Logger.error(errorMessage.get(), exception);
@@ -140,8 +139,8 @@ public class Functjonal {
         );
     }
 
-    public static <A, B, E extends Exception> Lazy<Optional<B>> mapFragileLazily(final A a, final FragileFunction<A, B, E> f, final Supplier<String> errorMessage) {
-        return Lazy.of(() -> mapFragile(a, f, errorMessage));
+    public static <A, B, E extends Exception> Lazy<Optional<B>> mapFailableLazily(final A a, final FailableFunction<A, B, E> f, final Supplier<String> errorMessage) {
+        return Lazy.of(() -> mapFailable(a, f, errorMessage));
     }
 
     /// Utility
