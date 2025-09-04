@@ -43,6 +43,15 @@ public class CompositeException extends Exception {
         this.inner.addAll(Arrays.asList(others));
     }
 
+    /**
+     * Combine all given exception.
+     * @param others Exceptions to combine. Takes ownership of the list.
+     */
+    public CompositeException(final List<Exception> others) {
+        super(others.stream().map(Exception::getMessage).collect(Collectors.joining("\n\n")));
+        this.inner = others;
+    }
+
     public static CompositeException mEmpty() {
         return new CompositeException();
     }
